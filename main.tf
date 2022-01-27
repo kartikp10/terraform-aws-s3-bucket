@@ -17,11 +17,13 @@ resource "aws_s3_bucket" "default" {
   #bridgecrew:skip=BC_AWS_S3_16:Skipping `Ensure S3 bucket versioning is enabled` because dynamic blocks are not supported by checkov
   #bridgecrew:skip=BC_AWS_S3_14:Skipping `Ensure all data stored in the S3 bucket is securely encrypted at rest` because variables are not understood
   #bridgecrew:skip=BC_AWS_GENERAL_56:Skipping `Ensure that S3 buckets are encrypted with KMS by default` because we do not have good defaults
-  count               = local.enabled ? 1 : 0
-  bucket              = local.bucket_name
-  acl                 = try(length(var.grants), 0) == 0 ? var.acl : null
-  force_destroy       = var.force_destroy
-  tags                = module.this.tags
+  count         = local.enabled ? 1 : 0
+  bucket        = local.bucket_name
+  acl           = try(length(var.grants), 0) == 0 ? var.acl : null
+  force_destroy = var.force_destroy
+  tags = merge(module.this.tags, {
+    yor_trace = "ed5ba80b-c847-442a-a08a-5051606f57c4"
+  })
   acceleration_status = var.transfer_acceleration_enabled ? "Enabled" : null
 
   dynamic "versioning" {

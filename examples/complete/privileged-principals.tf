@@ -41,6 +41,9 @@ resource "aws_iam_policy" "deployment_iam_policy" {
   count = var.privileged_principal_enabled ? 1 : 0
 
   policy = join("", data.aws_iam_policy_document.deployment_iam_policy.*.json)
+  tags = {
+    yor_trace = "53f69a6f-fddb-4264-8eb0-f9ab7fc70f1d"
+  }
 }
 
 module "deployment_principal_label" {
@@ -60,7 +63,9 @@ resource "aws_iam_role" "deployment_iam_role" {
   name               = join("", module.deployment_principal_label.*.id)
   assume_role_policy = join("", data.aws_iam_policy_document.deployment_assume_role.*.json)
 
-  tags = module.deployment_principal_label.tags
+  tags = merge(module.deployment_principal_label.tags, {
+    yor_trace = "e19f1423-9426-4cff-8d44-04344376670a"
+  })
 }
 
 module "additional_deployment_principal_label" {
@@ -80,7 +85,9 @@ resource "aws_iam_role" "additional_deployment_iam_role" {
   name               = join("", module.additional_deployment_principal_label.*.id)
   assume_role_policy = join("", data.aws_iam_policy_document.deployment_assume_role.*.json)
 
-  tags = module.additional_deployment_principal_label.tags
+  tags = merge(module.additional_deployment_principal_label.tags, {
+    yor_trace = "5c3971f6-729a-4279-a41f-598dc7568292"
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "additional_deployment_role_attachment" {
